@@ -74,20 +74,20 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<sequel>, ["~> 3.13"])
-      s.add_runtime_dependency(%q<activesupport>, ["~> 3.0.0.rc"])
-      s.add_runtime_dependency(%q<actionpack>, ["~> 3.0.0.rc"])
-      s.add_runtime_dependency(%q<railties>, ["~> 3.0.0.rc"])
+      s.add_runtime_dependency(%q<activesupport>, ["~> 3.0.4"])
+      s.add_runtime_dependency(%q<actionpack>, ["~> 3.0.4"])
+      s.add_runtime_dependency(%q<railties>, ["~> 3.0.4"])
     else
       s.add_dependency(%q<sequel>, ["~> 3.13"])
-      s.add_dependency(%q<activesupport>, ["~> 3.0.0.rc"])
-      s.add_dependency(%q<actionpack>, ["~> 3.0.0.rc"])
-      s.add_dependency(%q<railties>, ["~> 3.0.0.rc"])
+      s.add_dependency(%q<activesupport>, ["~> 3.0.4"])
+      s.add_dependency(%q<actionpack>, ["~> 3.0.4"])
+      s.add_dependency(%q<railties>, ["~> 3.0.4"])
     end
   else
     s.add_dependency(%q<sequel>, ["~> 3.13"])
-    s.add_dependency(%q<activesupport>, ["~> 3.0.0.rc"])
-    s.add_dependency(%q<actionpack>, ["~> 3.0.0.rc"])
-    s.add_dependency(%q<railties>, ["~> 3.0.0.rc"])
+    s.add_dependency(%q<activesupport>, ["~> 3.0.4"])
+    s.add_dependency(%q<actionpack>, ["~> 3.0.4"])
+    s.add_dependency(%q<railties>, ["~> 3.0.4"])
   end
 end
 
