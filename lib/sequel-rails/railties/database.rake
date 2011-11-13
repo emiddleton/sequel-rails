@@ -12,7 +12,7 @@ namespace :db do
     end
     
     desc "Load a schema.rb file into the database"
-    task :load => :environment do
+    task :load => [:environment] do
       require 'sequel-rails/storage'
       Rails::Sequel::Storage.new(Rails.env).create
       
@@ -27,14 +27,14 @@ namespace :db do
 
   namespace :create do
     desc 'Create all the local databases defined in config/database.yml'
-    task :all => :environment do
+    task :all => [:environment] do
       require 'sequel-rails/storage'
       Rails::Sequel::Storage.create_all
     end
   end
 
   desc "Create the database defined in config/database.yml for the current Rails.env - also creates the test database if Rails.env.development?"
-  task :create, :env => :environment do |t, args|
+  task :create, [:env] => [:environment] do |t, args|
     args.with_defaults(:env => Rails.env)
     
     require 'sequel-rails/storage'
@@ -47,14 +47,14 @@ namespace :db do
   
   namespace :drop do
     desc 'Drops all the local databases defined in config/database.yml'
-    task :all, :needs => :environment do
+    task :all => [:environment] do
       require 'sequel-rails/storage'
       Rails::Sequel::Storage.drop_all
     end
   end
   
   desc "Create the database defined in config/database.yml for the current Rails.env - also creates the test database if Rails.env.development?"
-  task :drop, :env, :needs => :environment do |t, args|
+  task :drop, [:env] => [:environment] do |t, args|
     args.with_defaults(:env => Rails.env)
     
     require 'sequel-rails/storage'
@@ -66,12 +66,12 @@ namespace :db do
   end
 
   namespace :migrate do
-    task :load => :environment do
+    task :load => [:environment] do
       require 'sequel-rails/migrations'
     end
 
     desc  'Rollbacks the database one migration and re migrate up. If you want to rollback more than one step, define STEP=x. Target specific version with VERSION=x.'
-    task :redo => :load do
+    task :redo => [:load] do
       if ENV["VERSION"]
         Rake::Task["db:migrate:down"].invoke
         Rake::Task["db:migrate:up"].invoke
@@ -86,7 +86,7 @@ namespace :db do
     task :reset => ["db:drop", "db:create", "db:migrate"]
 
     desc 'Runs the "up" for a given migration VERSION.'
-    task :up => :load do
+    task :up => [:load] do
       version = ENV["VERSION"] ? ENV["VERSION"].to_i : nil
       raise "VERSION is required" unless version
       Rails::Sequel::Migrations.migrate_up!(version)
@@ -94,7 +94,7 @@ namespace :db do
     end
 
     desc 'Runs the "down" for a given migration VERSION.'
-    task :down => :load do
+    task :down => [:load] do
       version = ENV["VERSION"] ? ENV["VERSION"].to_i : nil
       raise "VERSION is required" unless version
       Rails::Sequel::Migrations.migrate_down!(version)
@@ -103,27 +103,27 @@ namespace :db do
   end
   
   desc 'Migrate the database to the latest version'
-  task :migrate => :'migrate:load' do
+  task :migrate => [:'migrate:load'] do
     Rails::Sequel::Migrations.migrate_up!(ENV["VERSION"] ? ENV["VERSION"].to_i : nil)
     Rake::Task["db:schema:dump"].invoke if Rails.env != 'test'
   end
 
   desc 'Rolls the schema back to the previous version. Specify the number of steps with STEP=n'
-  task :rollback => :'migrate:load' do
+  task :rollback => [:'migrate:load'] do
     step = ENV['STEP'] ? ENV['STEP'].to_i : 1
     Sequel::Migrator.rollback('db/migrate/', step)
     Rake::Task["db:schema:dump"].invoke if Rails.env != 'test'
   end
 
   desc 'Pushes the schema to the next version. Specify the number of steps with STEP=n'
-  task :forward => :'migrate:load' do
+  task :forward => [:'migrate:load'] do
     step = ENV['STEP'] ? ENV['STEP'].to_i : 1
     Sequel::Migrator.forward('db/migrate/', step)
     Rake::Task["db:schema:dump"].invoke if Rails.env != 'test'
   end
   
   desc 'Load the seed data from db/seeds.rb'
-  task :seed => :environment do
+  task :seed => [:environment] do
     seed_file = File.join(Rails.root, 'db', 'seeds.rb')
     load(seed_file) if File.exist?(seed_file)
   end
@@ -145,4 +145,4 @@ namespace :db do
   end
 end
 
-task 'test:prepare' => 'db:test:prepare'
+task 'test:prepare' => ['db:test:prepare']
